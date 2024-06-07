@@ -68,7 +68,7 @@ const MessageFlow = forwardRef(({}, ref) => {
         },
       };
     },
-    [nodes, selectedNode, edges]
+    [nodes, selectedNode, edges, setNodes]
   );
 
   const onConnect = useCallback(
@@ -124,7 +124,7 @@ const MessageFlow = forwardRef(({}, ref) => {
       };
       setNodes((nds) => nds.concat(newNode));
     },
-    [reactFlowInstance]
+    [reactFlowInstance, dispatch]
   );
 
   const onDragOver = useCallback((event) => {
@@ -132,16 +132,19 @@ const MessageFlow = forwardRef(({}, ref) => {
     event.dataTransfer.dropEffect = "move";
   }, []);
 
-  const onNodeClick = useCallback((event, node) => {
-    // when click on any node the select node will be store in state for side bar reference
-    event.preventDefault();
-    dispatch({ type: "SELECT_NODE", payload: node });
-  }, []);
+  const onNodeClick = useCallback(
+    (event, node) => {
+      // when click on any node the select node will be store in state for side bar reference
+      event.preventDefault();
+      dispatch({ type: "SELECT_NODE", payload: node });
+    },
+    [dispatch]
+  );
 
   const onPaneClick = useCallback(() => {
     // when user click outside of node then selected node would be null
     dispatch({ type: "UNSELECT_NODE" });
-  }, []);
+  }, [dispatch]);
 
   return (
     <ReactFlow
@@ -160,5 +163,5 @@ const MessageFlow = forwardRef(({}, ref) => {
     ></ReactFlow>
   );
 });
-
+MessageFlow.displayName = "MessageFlow";
 export { MessageFlow };

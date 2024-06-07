@@ -30,3 +30,5 @@ export const CustomNode = React.memo(({ data }) => {
     </div>
   );
 });
+
+CustomNode.displayName = "CustomNode";
