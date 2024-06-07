@@ -50,11 +50,14 @@ const MessageFlow = forwardRef(({}, ref) => {
           if (availableNodeIds.length > 0 && edges.length === 0) {
             isValid = false;
           }
+
+          // store unique edges
           edges.forEach((eachEdge) => {
             uniqueEdges.add(eachEdge.source);
             uniqueEdges.add(eachEdge.target);
           });
 
+          // validate each node, each nodeId should be available into uniques edges set
           for (let nodeId of availableNodeIds) {
             if (!uniqueEdges.has(nodeId)) {
               isValid = false;
@@ -70,11 +73,13 @@ const MessageFlow = forwardRef(({}, ref) => {
 
   const onConnect = useCallback(
     (params) => {
+      // fn will call when we are trying to link nodes
       const { source } = params;
       const incomingEdges = edges.filter((el) => el.source === source);
 
       // if source of incoming edge is already exist then not allowed to make connection
       if (incomingEdges.length === 0) {
+        // set fn update the array for edges
         setEdges((eds) =>
           addEdge(
             { ...params, markerEnd: { type: MarkerType.ArrowClosed } },
@@ -90,6 +95,8 @@ const MessageFlow = forwardRef(({}, ref) => {
 
   const onDrop = useCallback(
     (event) => {
+      // this drop fn will rn when we a node will drop on canvas
+      // then we can add data accordingly into a node with node configuration
       event.preventDefault();
 
       const type = event.dataTransfer.getData("application/reactflow");
@@ -99,11 +106,14 @@ const MessageFlow = forwardRef(({}, ref) => {
         return;
       }
 
+      // some fn provided by ReactFlow itself using onInit fn
       const position = reactFlowInstance.screenToFlowPosition({
         x: event.clientX - 65,
         y: event.clientY - 40,
       });
+
       const id = getId();
+
       const newNode = {
         id,
         type: "customMessageNode",
@@ -123,11 +133,13 @@ const MessageFlow = forwardRef(({}, ref) => {
   }, []);
 
   const onNodeClick = useCallback((event, node) => {
+    // when click on any node the select node will be store in state for side bar reference
     event.preventDefault();
     dispatch({ type: "SELECT_NODE", payload: node });
   }, []);
 
   const onPaneClick = useCallback(() => {
+    // when user click outside of node then selected node would be null
     dispatch({ type: "UNSELECT_NODE" });
   }, []);
 
